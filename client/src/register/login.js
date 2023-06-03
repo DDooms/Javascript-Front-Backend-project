@@ -1,6 +1,14 @@
 import React from 'react';
 
 class Login extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            errorMessage: '',
+            successMessage: '',
+        };
+    }
+
     handleRegisterClick = () => {
         this.props.onToggle();
     };
@@ -18,18 +26,24 @@ class Login extends React.Component {
         });
 
         if (response.ok) {
-            console.log('Login successful');
-
+            this.setState({ successMessage: 'Login successful', errorMessage: '' });
         } else {
             const errorMessage = await response.text();
-            console.error(`Login failed: ${errorMessage}`);
-
+            this.setState({ errorMessage });
         }
     };
 
     render() {
         return (
             <div className="main-page">
+                {this.state.errorMessage && (
+                    <p className="error-message">{this.state.errorMessage}</p>
+                )}
+                {this.state.successMessage && (
+                    <p className="success-message">{this.state.successMessage}</p>
+                )}
+
+
                 <div className="user-input">
                     <label htmlFor="email">
                         <img src="https://imageshack.com/i/pmoR8X3cp" alt="User Icon" className="user-icon" />
