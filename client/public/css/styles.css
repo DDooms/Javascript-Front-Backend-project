@@ -71,24 +71,6 @@ button {
     font-weight: bold;
 }
 
-.incorrect-input, #invalid-input {
-    position: relative;
-    left: 10%;
-}
-
-#empty-username,
-#empty-email,
-#empty-password,
-#invalid-username,
-#username-exists,
-#invalid-email,
-#email-exists,
-#passwords-match,
-#invalid-input {
-    color: red;
-    display: none;
-}
-
 input {
     border-radius: 6px;
     border-width: 0;
@@ -138,18 +120,6 @@ button {
     background-color: rgb(0, 132, 255);
 }
 
-#no-account {
-    margin-top: 5%;
-    margin-left: 27%;
-    color: white;
-}
-
-
-
-
-
-
-
 .error-message {
     color: red;
     font-size: 20px;
@@ -162,4 +132,10 @@ button {
     font-size: 20px;
     margin-top: 5%;
     margin-left: 10%;
+}
+
+#no-account {
+    margin-top: 5%;
+    margin-left: 27%;
+    color: white;
 }
