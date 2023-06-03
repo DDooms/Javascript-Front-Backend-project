@@ -94,30 +94,12 @@ const deleteUser = async (req, res) => {
 
 const registerUser = async (req, res) => {
     const { username, email, password } = req.body;
-    const emailValidator = /^[^@]+@[^@]+\.[^.]+$/;
-
-    if (username.length === 0) {
-        res.status(400).send("Enter a Username!");
-        return;
-    }
-
-    if (username.length < 3) {
-        res.status(400).send("Username must be at least 3 symbols!");
-        return;
-    }
-
-    /*if (confirm_password && password !== confirm_password) {
-        res.status(400).send("Passwords don't match!");
-        return;
-    }*/
 
     try {
         const usernameCheck = await pool.query(queries.checkIfUsernameExists, [username]);
         const emailExistsCheck = await pool.query(queries.checkIfEmailExists, [email]);
 
-        if (!email.match(emailValidator)) {
-            res.status(400).send("Invalid email format");
-        } else if (emailExistsCheck.rows.length) {
+        if (emailExistsCheck.rows.length) {
             res.status(409).send("Email already exists");
         } else if (usernameCheck.rows.length) {
             res.status(409).send("Username already exists");
@@ -139,7 +121,7 @@ const loginUser = async (req, res) => {
     try {
         const user = await pool.query(queries.getUserByEmail, [email]);
 
-        if (user.rows.length === 0 || user.rows[0].password !== password)
+        if (user.rows.length === 0 || user.rows[0].password !== password || user.rows[0].password.length === 0)
             return res.status(401).send("Invalid email or password!");
 
         res.status(200).send("Login successful");

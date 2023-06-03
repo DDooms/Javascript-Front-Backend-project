@@ -36,13 +36,6 @@ class Login extends React.Component {
     render() {
         return (
             <div className="main-page">
-                {this.state.errorMessage && (
-                    <p className="error-message">{this.state.errorMessage}</p>
-                )}
-                {this.state.successMessage && (
-                    <p className="success-message">{this.state.successMessage}</p>
-                )}
-
 
                 <div className="user-input">
                     <label htmlFor="email">
@@ -58,6 +51,14 @@ class Login extends React.Component {
                         <input type="password" id="password" name="password" placeholder="Password" />
                     </label>
                 </div>
+
+                {this.state.errorMessage && (
+                    <p className="error-message">{this.state.errorMessage}</p>
+                )}
+                {this.state.successMessage && (
+                    <p className="success-message">{this.state.successMessage}</p>
+                )}
+
                 <button type="button" className="sign-in" onClick={this.handleLoginClick}>
                     LOG IN
                 </button>
