@@ -1,5 +1,7 @@
 const pool = require('../../db');
 const queries = require('./queries');
+const bcrypt = require('bcrypt');
+const { STATUS, MESSAGE } = require('./constants');
 
 const getUsers = async (req, res) => {
     try {
@@ -32,7 +34,7 @@ const getUserByUsername = async (req, res) => {
 // [username], by wrapping the dynamic argument with [], you can pass an actual username
 
 const addUser = async (req, res) => {
-    const { username, email, password } = req.body;
+    const {username, email, password} = req.body;
 
     try {
         const usernameCheck = await pool.query(queries.checkIfUsernameExists, [username]);
@@ -74,7 +76,7 @@ const addUser = async (req, res) => {
 };*/
 
 const deleteUser = async (req, res) => {
-    const { username } = req.params;
+    const {username} = req.params;
 
     try {
         const user = await pool.query(queries.getUserByUsername, [username]);
@@ -93,24 +95,27 @@ const deleteUser = async (req, res) => {
 };
 
 const registerUser = async (req, res) => {
-    const { username, email, password } = req.body;
+    const {username, email, password} = req.body;
 
     try {
         const usernameCheck = await pool.query(queries.checkIfUsernameExists, [username]);
         const emailExistsCheck = await pool.query(queries.checkIfEmailExists, [email]);
 
         if (emailExistsCheck.rows.length) {
-            res.status(409).send("Email already exists");
+            res.status(STATUS.UNAUTHORIZED).send(MESSAGE.EMAIL_EXISTS);
         } else if (usernameCheck.rows.length) {
-            res.status(409).send("Username already exists");
-        } else {
-            await pool.query(queries.addUser, [username, email, password]);
-            res.status(201).send("User registered successfully");
-            // MAYBE ADD CONSTANTS FOR THESE STATUSES
+            res.status(STATUS.UNAUTHORIZED).send(MESSAGE.USERNAME_EXISTS);
         }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        await pool.query(queries.addUser, [username, email, hashedPassword]);
+        res.status(STATUS.CREATED).send(MESSAGE.REGISTRATION_SUCCESSFUL);
+        // MAYBE ADD CONSTANTS FOR THESE STATUSES
+
     } catch (error) {
         console.error(error);
-        res.status(500).send("Internal Server Error");
+        res.status(STATUS.SERVER_ERROR).send(MESSAGE.SERVER_ERROR);
     }
 };
 
@@ -121,15 +126,25 @@ const loginUser = async (req, res) => {
     try {
         const user = await pool.query(queries.getUserByEmail, [email]);
 
-        if (user.rows.length === 0 || user.rows[0].password !== password || user.rows[0].password.length === 0)
-            return res.status(401).send("Invalid email or password!");
+        if (user.rows.length === 0) {
+            return res.status(STATUS.UNAUTHORIZED).send(MESSAGE.INVALID_CREDENTIALS);
+        }
 
-        res.status(200).send("Login successful");
+        const hashedPassword = user.rows[0].password;
+        const passwordMatch = await bcrypt.compare(password, hashedPassword);
+
+        if (passwordMatch) {
+            res.status(STATUS.OK).send(MESSAGE.LOGIN_SUCCESSFUL);
+        } else {
+            res.status(STATUS.UNAUTHORIZED).send(MESSAGE.INVALID_CREDENTIALS);
+        }
+
     } catch (error) {
         console.error(error);
-        res.status(500).send("Internal Server Error");
+        res.status(STATUS.SERVER_ERROR).send(MESSAGE.SERVER_ERROR);
     }
 };
+
 
 
 module.exports = {
