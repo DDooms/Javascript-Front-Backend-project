@@ -48,6 +48,10 @@ function Register() {
         if (response.ok) {
             setSuccessMessage('User registered successfully');
             setErrorMessage('');
+
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000);
         } else {
             const errorMessage = await response.text();
             setErrorMessage(errorMessage);

@@ -20,6 +20,10 @@ function Login() {
         if (response.ok) {
             setSuccessMessage('Login successful');
             setErrorMessage('');
+
+            setTimeout(() => {
+                navigate('/main');
+            }, 2000);
         } else {
             const errorMessage = await response.text();
             setErrorMessage(errorMessage);
