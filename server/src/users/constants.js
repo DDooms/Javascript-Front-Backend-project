@@ -1,4 +1,4 @@
-export const STATUS = {
+const STATUS = {
     OK: 200,
     CREATED: 201,
     UNAUTHORIZED: 401,
@@ -6,7 +6,7 @@ export const STATUS = {
     SERVER_ERROR: 500,
 };
 
-export const MESSAGE = {
+const MESSAGE = {
     LOGIN_SUCCESSFUL: "Login successful",
     REGISTRATION_SUCCESSFUL: "User registered successfully",
     INVALID_CREDENTIALS: "Invalid email or password",
@@ -14,3 +14,8 @@ export const MESSAGE = {
     USERNAME_EXISTS: "Username already exists",
     SERVER_ERROR: "Internal Server Error",
 };
+
+module.exports = {
+    STATUS,
+    MESSAGE,
+}
